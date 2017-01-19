@@ -1,0 +1,145 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+        <!-- Place favicon.ico in the root directory -->
+
+        <link rel="stylesheet" href="css/normalize.css">
+        <link rel="stylesheet" href="css/main.css">
+        <script src="js/vendor/modernizr-2.8.3.min.js"></script>
+    </head>
+    <body>
+
+        <h1>David Yahtzee</h1>
+
+        <div id='dice1' class='dice'>
+            <div class='dot1 dot'></div>
+            <div class='dot2 dot'></div>
+            <div class='dot3 dot'></div>
+            <div class='dot4 dot'></div>
+            <div class='dot5 dot'></div>
+            <div class='dot6 dot'></div>
+            <div class='dot7 dot'></div>
+        </div>
+
+        <div id='dice2' class='dice'>
+            <div class='dot1 dot'></div>
+            <div class='dot2 dot'></div>
+            <div class='dot3 dot'></div>
+            <div class='dot4 dot'></div>
+            <div class='dot5 dot'></div>
+            <div class='dot6 dot'></div>
+            <div class='dot7 dot'></div>
+        </div>
+
+        <div id='dice3' class='dice'>
+            <div class='dot1 dot'></div>
+            <div class='dot2 dot'></div>
+            <div class='dot3 dot'></div>
+            <div class='dot4 dot'></div>
+            <div class='dot5 dot'></div>
+            <div class='dot6 dot'></div>
+            <div class='dot7 dot'></div>
+        </div>
+
+        <div id='dice4' class='dice'>
+            <div class='dot1 dot'></div>
+            <div class='dot2 dot'></div>
+            <div class='dot3 dot'></div>
+            <div class='dot4 dot'></div>
+            <div class='dot5 dot'></div>
+            <div class='dot6 dot'></div>
+            <div class='dot7 dot'></div>
+        </div>
+
+        <div id='dice5' class='dice'>
+            <div class='dot1 dot'></div>
+            <div class='dot2 dot'></div>
+            <div class='dot3 dot'></div>
+            <div class='dot4 dot'></div>
+            <div class='dot5 dot'></div>
+            <div class='dot6 dot'></div>
+            <div class='dot7 dot'></div>
+        </div>
+
+        <p id='totalRollsNumber'>0</p>
+
+        <button id='rollButton'>Roll</button>
+        <button>Finish your Go</button>
+
+        <p id='console'></p>
+
+        <table class='scoreCard'>
+            <th>Score Card</th>
+            <tr id='onesScore'>
+                <td>Ones</td>
+                <td>-</td>
+            </tr>
+            <tr id='twosScore'>
+                <td>Twos</td>
+                <td>-</td>
+            </tr>
+            <tr id='threesScore'>
+                <td>Threes</td>
+                <td>-</td>
+            </tr>
+            <tr id='foursScore'>
+                <td>Fours</td>
+                <td>-</td>
+            </tr>
+            <tr id='fivesScore'>
+                <td>Fives</td>
+                <td>-</td>
+            </tr>
+            <tr id='sixesScore'>
+                <td>Sixes</td>
+                <td>-</td>
+            </tr>
+            <tr id='threeKindScore'>
+                <td>Three of a kind</td>
+                <td>-</td>
+            </tr>
+            <tr id='fourKindScore'>
+                <td>Four of a kind</td>
+                <td>-</td>
+            </tr>
+            <tr id='fullHouse'>
+                <td>Full House</td>
+                <td>-</td>
+            </tr>
+            <tr id='shortStraight'>
+                <td>Short Straight</td>
+                <td>-</td>
+            </tr>
+            <tr id='longStraight'>
+                <td>Long Straight</td>
+                <td>-</td>
+            </tr>
+            <tr id='yahtzee'>
+                <td>Yahtzee</td>
+                <td>-</td>
+            </tr>
+            <tr id='chance'>
+                <td>Chance</td>
+                <td>-</td>
+            </tr>
+
+
+
+        </table>
+
+
+        <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.12.0.min.js"><\/script>')</script>
+        <script src="js/plugins.js"></script>
+        <script src="js/underscore-min.js"></script>
+        <script src="js/main.js"></script>
+
+    </body>
+</html>
