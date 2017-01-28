@@ -3,6 +3,8 @@
 var turnsAllowed = 3; // This is editable to suit, normal turns allowed is 3
 var totalDice = 5; //Changing this will break the game as it currently is, variable in place for better code readability
 var maxGameTurns = 13; // This value should be 13
+var upperBonusRequirement = 63; // This is normally set to 63
+var upperBonus = 35 // This is normally set to 35
 
 // Active or inactive dice:
 
@@ -28,9 +30,13 @@ var rollDice;
 // Variables to keep log of game processes
 var totalRolls = 0;
 var gameTurns = 0;
-var scoreClick = 0;
+var scoreClick = 2;
 var gameOver = false;
 var scoreTotal = 0;
+var upperScore = 0;
+var lowerScore = 0;
+var bonusCheck = 0;
+var bonusCheckPassed = false;
 
 
 // The dice are true or false so that the function knows if to roll or not
@@ -426,77 +432,78 @@ function ScoreChecking() {
 function scoreSelect() {
 
 	$('.scoreCard tr').on('click', function() {
-		if (gameOver) {
-			alert('GAME OVER!');
-			return false;
-		}
-		if (scoreClick > 0) {
-			$('#console').text('You have already selected a score for this turn, please roll again for your next turn!');
-			return false;
-		} 
-	
 		var value = $(this).find('td:eq(1)').text();
 		var id = $(this).attr('id');
 
-		if (value != '-') {
+		if (gameOver) {
+			alert('GAME OVER!');
+			return false;
+		} else if (scoreClick === 2) {
+			$('#console').text('You need to Roll to start the game! You cannot select a score with no dice rolled!');
+			return false;
+		} else if (id === 'bonus' || id === 'total' || id === 'lTotal' || id === 'uTotal') {
+			$('#console').text('This is not a score selector!');
+			return false;
+		} else if (scoreClick > 0) {
+			$('#console').text('You have already selected a score for this turn, please roll again for your next turn!');
+			return false;
+		} else if (value != '-') {
 			$('#console').text('You have already selected a score for this catorgory, please make another selection!');
 			return false;			
 		}
 		
-		scoreClick++;
-
 		switch(id) {
 			case 'onesScore':
 				var score = ScoreChecker.checkOnes();
-				scoreUpdate(this, score);
+				scoreUpdate(this, score, 'upper');
 				break;
 			case 'twosScore':
 				var score = ScoreChecker.checkTwos();
-				scoreUpdate(this, score);
+				scoreUpdate(this, score, 'upper');
 				break;
 			case 'threesScore':
 				var score = ScoreChecker.checkThrees();
-				scoreUpdate(this, score);
+				scoreUpdate(this, score, 'upper');
 				break;
 			case 'foursScore':
 				var score = ScoreChecker.checkFours();
-				scoreUpdate(this, score);
+				scoreUpdate(this, score, 'upper');
 				break;
 			case 'fivesScore':
 				var score = ScoreChecker.checkFives();
-				scoreUpdate(this, score);
+				scoreUpdate(this, score, 'upper');
 				break;
 			case 'sixesScore':
 				var score = ScoreChecker.checkSixes();
-				scoreUpdate(this, score);
+				scoreUpdate(this, score, 'upper');
 				break;
 			case 'threeKindScore':
 				var score = ScoreChecker.checkTOAK();
-				scoreUpdate(this, score);
+				scoreUpdate(this, score, 'lower');
 				break;
 			case 'fourKindScore':
 				var score = ScoreChecker.checkFOAK();
-				scoreUpdate(this, score);
+				scoreUpdate(this, score, 'lower');
 				break;
 			case 'fullHouse':
 				var score = ScoreChecker.checkFH();
-				scoreUpdate(this, score);
+				scoreUpdate(this, score, 'lower');
 				break;
 			case 'shortStraight':
 				var score = ScoreChecker.checkSS();
-				scoreUpdate(this, score);
+				scoreUpdate(this, score, 'lower');
 				break;
 			case 'longStraight':
 				var score = ScoreChecker.checkLS();
-				scoreUpdate(this, score);
+				scoreUpdate(this, score, 'lower');
 				break;
 			case 'yahtzee':
 				var score = ScoreChecker.checkYahtzee();
-				scoreUpdate(this, score);
+				scoreUpdate(this, score, 'lower');
 				break;
 			case 'chance':
 				var score = ScoreChecker.checkChance();
-				scoreUpdate(this, score);
+				scoreUpdate(this, score, 'lower');
 				break;
 			default:
 				console.log('Error in switch function for scoreSelect(), id not recognised');
@@ -512,17 +519,40 @@ function scoreSelect() {
 			endGame();
 		}
 
+		bonusChecker();
 		rollDice.showZero();
 		cancelSelect();
 	});
 }
 
 
-function scoreUpdate(id, score) {
+function bonusChecker() {
+	if(upperScore >= upperBonusRequirement && !bonusCheckPassed) {
+		scoreTotal += upperBonus;
+		upperScore += upperBonus;
+		bonusCheckPassed = true;
+		$('#bonus').find('td:eq(1)').text(upperBonus);
+		$('#uTotal').find('td:eq(1)').text(upperScore);
+		$('#total').find('td:eq(1)').text(scoreTotal);
+	}
+}
+
+
+function scoreUpdate(id, score, level) {
 	scoreTotal += parseInt(score);
+	if(level === 'upper') {
+		upperScore += score;
+	} else if (level === 'lower') {
+		lowerScore += score;
+	} else {
+		console.log('Scoreupdate() error, level not defined as upper or lower');
+	}
 	//Updates the score and the total
 	$(id).find('td:eq(1)').text(score);
 	$('#total').find('td:eq(1)').text(scoreTotal);
+	$('#uTotal').find('td:eq(1)').text(upperScore);
+	$('#lTotal').find('td:eq(1)').text(lowerScore);
+	scoreClick++;
 }
 
 
@@ -542,8 +572,10 @@ function initVariables() {
 function roll() {
 
 	$('#rollButton').on('click', function() {
+
 		if (gameOver) {
 			alert('GAME OVER!');
+			$('#console').text('Game Over!');
 			return false;
 		}
 		if(totalRolls < turnsAllowed) {
