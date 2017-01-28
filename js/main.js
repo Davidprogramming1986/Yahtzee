@@ -524,9 +524,10 @@ function scoreSelect() {
 
 
 function scoreUpdate(id, score) {
-	total += score;
+	scoreTotal += parseInt(score);
+	//Updates the score and the total
 	$(id).find('td:eq(1)').text(score);
-	$('#total').text(total);
+	$('#total').find('td:eq(1)').text(scoreTotal);
 }
 
 
