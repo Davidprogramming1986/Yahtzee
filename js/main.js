@@ -300,10 +300,11 @@ function ScoreChecking() {
 	};
 
 	this.checkTOAK = function() {
-		var count, maxkey, max, i, dicelist = this.diceArray();
+		var count, maxkey, max, i, total, dicelist = this.diceArray();
 
 		count = _.countBy(dicelist, _.identity);
 		maxKey = _.max(Object.keys(count), function (key) { return count[key]; });
+		total = d1val + d2val + d3val + d4val + d5val;
 
 		max = 0;
 		for(i = 0; i < Object.keys(count).length; i++) {
@@ -314,20 +315,17 @@ function ScoreChecking() {
 
 		if(max < 3) {
 			return 0;
-		} else if(max === 3) {
-			return maxKey * 3;
-		} else if(max === 4) {
-			return maxKey * 4;
 		} else {
-			return maxKey * 5;
-		}
+			return total;
+		} 
 	};
 
 	this.checkFOAK = function() {
-		var count, maxkey, max, i, dicelist = this.diceArray();
+		var count, maxkey, max, i, total, dicelist = this.diceArray();
 
 		count = _.countBy(dicelist, _.identity);
 		maxKey = _.max(Object.keys(count), function (key) { return count[key]; });
+		total = d1val + d2val + d3val + d4val + d5val;
 
 		max = 0;
 		for(i = 0; i < Object.keys(count).length; i++) {
@@ -338,11 +336,9 @@ function ScoreChecking() {
 
 		if(max < 4) {
 			return 0;
-		} else if(max === 4) {
-			return maxKey * 4;
 		} else {
-			return maxKey * 5;
-		}
+			return total;
+		} 
 	};
 
 	this.checkFH = function() {
@@ -507,7 +503,6 @@ function scoreSelect() {
 		}
 
 		totalRolls = 0;
-		updateRoll();
 		gameTurns++;
 
 		if(gameTurns < maxGameTurns) {
@@ -528,12 +523,6 @@ function scoreUpdate(id, score) {
 	//Updates the score and the total
 	$(id).find('td:eq(1)').text(score);
 	$('#total').find('td:eq(1)').text(scoreTotal);
-}
-
-
-function updateRoll() {
-	// Updates the number of rolls
-	$('#totalRollsNumber').text(totalRolls);
 }
 
 
@@ -561,7 +550,6 @@ function roll() {
 			scoreClick = 0;
 			rollDice.roll();
 			totalRolls++;
-			updateRoll();
 			$('#console').text('Rolling roll ' + totalRolls);
 		} else {
 			$('#console').text('You have used up all ' + totalRolls + ' turns, please select where you want this turn scored');
@@ -589,3 +577,7 @@ function game() {
 $(document).ready(function() {
 	game();
 });
+
+
+
+

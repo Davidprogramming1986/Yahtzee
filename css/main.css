@@ -97,9 +97,14 @@ textarea {
 
 /* Dice Styles */
 
+.dice-wrap {
+    text-align: center;
+}
+
 .dice {
     display: inline-block;
     position: relative;
+    background-color: white;
     width: 100px;
     height: 100px;
     border: 1px solid black;
@@ -153,13 +158,39 @@ textarea {
     opacity: 0.4;
 }
 
-#totalRollsNumber {
-    margin-left: 50px;
+/* Background */
+
+body {
+    height: 1500px;
+    background: linear-gradient(#1CD8D2, #93EDC7);
 }
 
-button {
+/* Title CSS */
+
+.title {
+    font-size: 50px;
+    text-align: center;
+    margin: 40px 0 80px 0;
+}
+
+/* Button CSS */
+
+#rollButton {
     display: block;
-    margin: 10px;
+    padding: 20px 100px 20px 100px;
+    font-size: 60px;
+    margin: 60px auto 60px auto;
+
+}
+
+.scoreCard {
+    margin: auto;
+}
+
+#console {
+    text-align: center;
+    font-size: 20px;
+    margin: 20px;
 }
 
 
