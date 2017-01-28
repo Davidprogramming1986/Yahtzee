@@ -1,7 +1,8 @@
 // Game altering variables
 
-var turnsAllowed = 3;
+var turnsAllowed = 3; // This is editable to suit, normal turns allowed is 3
 var totalDice = 5; //Changing this will break the game as it currently is, variable in place for better code readability
+var maxGameTurns = 13; // This value should be 13
 
 // Active or inactive dice:
 
@@ -18,15 +19,21 @@ var d3val = 0;
 var d4val = 0;
 var d5val = 0;
 
-var rollTheDice;
-var ScoreChecker = new ScoreChecking();
+// Score Checker Object
+var ScoreChecker;
 
+// Roll Object
+var rollDice;
+
+// Variables to keep log of game processes
 var totalRolls = 0;
 var gameTurns = 0;
-var gameInPlay = false;
+var scoreClick = 0;
+var gameOver = false;
+var scoreTotal = 0;
 
 
-// The dice are true or false so that the dunction knows if to roll or not
+// The dice are true or false so that the function knows if to roll or not
 function Roll() {
 
 	this.showOne = function(diceNum) {
@@ -95,6 +102,13 @@ function Roll() {
 		return 6;
 	};
 
+	this.showZero = function() {
+		$('.dot').addClass('hidden');
+		$('#console').text('Click Roll to take another turn!');
+		d1val = 0;	
+		return 0;
+	}
+
 	this.rollDice = function(roll, diceNum) {
 		switch(roll) {
 			case 1: this.showOne(diceNum); break;
@@ -108,7 +122,6 @@ function Roll() {
 	};
 
 	this.roll = function() {
-
 		if (dice1) {
 			var roll = Math.floor((Math.random() * 6) + 1);
 			this.rollDice(roll, 'dice1');
@@ -135,16 +148,25 @@ function Roll() {
 			d5val = roll;
 		}
 	};
-
-	this.startDicePos = function() {
-		this.showSix('dice1');
-		this.showSix('dice2');
-		this.showSix('dice3');
-		this.showSix('dice4');
-		this.showSix('dice5');
-	};
-
 }
+
+
+function cancelSelect() {
+	if(d1val === 0) {
+		$('#dice1').removeClass('selected');
+		$('#dice2').removeClass('selected');
+		$('#dice3').removeClass('selected');
+		$('#dice4').removeClass('selected');
+		$('#dice5').removeClass('selected');
+		dice1 = true;
+		dice2 = true;
+		dice3 = true;
+		dice4 = true;
+		dice5 = true;
+		return false;
+	}
+}
+
 
 function select() {
 
@@ -156,6 +178,7 @@ function select() {
 			$(this).removeClass('selected');
 			dice1 = true;
 		}
+		cancelSelect();
 	});
 
 	$('#dice2').on('click', function() {
@@ -166,6 +189,7 @@ function select() {
 			$(this).removeClass('selected');
 			dice2 = true;
 		}	
+		cancelSelect();
 	});
 
 	$('#dice3').on('click', function() {
@@ -175,7 +199,8 @@ function select() {
 		} else {
 			$(this).removeClass('selected');
 			dice3 = true;
-		}	
+		}
+		cancelSelect();	
 	});
 
 	$('#dice4').on('click', function() {
@@ -186,6 +211,7 @@ function select() {
 			$(this).removeClass('selected');
 			dice4 = true;
 		}	
+		cancelSelect();
 	});
 
 	$('#dice5').on('click', function() {
@@ -196,10 +222,13 @@ function select() {
 			$(this).removeClass('selected');
 			dice5 = true;
 		}	
+		cancelSelect();
 	});
 }
 
+
 function ScoreChecking() {
+
 	this.diceArray = function() {
 		return [d1val, d2val, d3val, d4val, d5val];
 	};
@@ -397,124 +426,165 @@ function ScoreChecking() {
 	}
 }
 
-function resetTurn() {
-	gameInPlay = false;
-	totalRolls = 0;
-	updateRoll();
-
-	if(gameTurns < 13) {
-		$('#console').text('Your go has ended, click the Roll button to go again!');
-	}
-	else {
-		$('#console').text('Game Over!');
-	}
-}
-
 
 function scoreSelect() {
 
-	$('#onesScore').on('click', function() {
-		var score = ScoreChecker.checkOnes();
-		$(this).find('td:eq(1)').text(score);
-		resetTurn();
+	$('.scoreCard tr').on('click', function() {
+		if (gameOver) {
+			alert('GAME OVER!');
+			return false;
+		}
+		if (scoreClick > 0) {
+			$('#console').text('You have already selected a score for this turn, please roll again for your next turn!');
+			return false;
+		} 
+	
+		var value = $(this).find('td:eq(1)').text();
+		var id = $(this).attr('id');
+
+		if (value != '-') {
+			$('#console').text('You have already selected a score for this catorgory, please make another selection!');
+			return false;			
+		}
+		
+		scoreClick++;
+
+		switch(id) {
+			case 'onesScore':
+				var score = ScoreChecker.checkOnes();
+				scoreUpdate(this, score);
+				break;
+			case 'twosScore':
+				var score = ScoreChecker.checkTwos();
+				scoreUpdate(this, score);
+				break;
+			case 'threesScore':
+				var score = ScoreChecker.checkThrees();
+				scoreUpdate(this, score);
+				break;
+			case 'foursScore':
+				var score = ScoreChecker.checkFours();
+				scoreUpdate(this, score);
+				break;
+			case 'fivesScore':
+				var score = ScoreChecker.checkFives();
+				scoreUpdate(this, score);
+				break;
+			case 'sixesScore':
+				var score = ScoreChecker.checkSixes();
+				scoreUpdate(this, score);
+				break;
+			case 'threeKindScore':
+				var score = ScoreChecker.checkTOAK();
+				scoreUpdate(this, score);
+				break;
+			case 'fourKindScore':
+				var score = ScoreChecker.checkFOAK();
+				scoreUpdate(this, score);
+				break;
+			case 'fullHouse':
+				var score = ScoreChecker.checkFH();
+				scoreUpdate(this, score);
+				break;
+			case 'shortStraight':
+				var score = ScoreChecker.checkSS();
+				scoreUpdate(this, score);
+				break;
+			case 'longStraight':
+				var score = ScoreChecker.checkLS();
+				scoreUpdate(this, score);
+				break;
+			case 'yahtzee':
+				var score = ScoreChecker.checkYahtzee();
+				scoreUpdate(this, score);
+				break;
+			case 'chance':
+				var score = ScoreChecker.checkChance();
+				scoreUpdate(this, score);
+				break;
+			default:
+				console.log('Error in switch function for scoreSelect(), id not recognised');
+		}
+
+		totalRolls = 0;
+		updateRoll();
+		gameTurns++;
+
+		if(gameTurns < maxGameTurns) {
+			$('#console').text('Your go has ended, click the Roll button to go again!');
+		}
+		else {
+			endGame();
+		}
+
+		rollDice.showZero();
+		cancelSelect();
 	});
-	$('#twosScore').on('click', function() {
-		var score = ScoreChecker.checkTwos();
-		$(this).find('td:eq(1)').text(score);
-		resetTurn();
-	});
-	$('#threesScore').on('click', function() {
-		var score = ScoreChecker.checkThrees();
-		$(this).find('td:eq(1)').text(score);
-		resetTurn();
-	});
-	$('#foursScore').on('click', function() {
-		var score = ScoreChecker.checkFours();
-		$(this).find('td:eq(1)').text(score);
-		resetTurn();
-	});
-	$('#fivesScore').on('click', function() {
-		var score = ScoreChecker.checkFives();
-		$(this).find('td:eq(1)').text(score);
-		resetTurn();
-	});
-	$('#sixesScore').on('click', function() {
-		var score = ScoreChecker.checkSixes();
-		$(this).find('td:eq(1)').text(score);
-		resetTurn();
-	});
-	$('#threeKindScore').on('click', function() {
-		var score = ScoreChecker.checkTOAK();
-		$(this).find('td:eq(1)').text(score);
-		resetTurn();
-	});
-	$('#fourKindScore').on('click', function() {
-		var score = ScoreChecker.checkFOAK();
-		$(this).find('td:eq(1)').text(score);
-		resetTurn();
-	});
-	$('#fullHouse').on('click', function() {
-		var score = ScoreChecker.checkFH();
-		$(this).find('td:eq(1)').text(score);
-		resetTurn();
-	});	
-	$('#shortStraight').on('click', function() {
-		var score = ScoreChecker.checkSS();
-		$(this).find('td:eq(1)').text(score);
-		resetTurn();
-	});	
-	$('#longStraight').on('click', function() {
-		var score = ScoreChecker.checkLS();
-		$(this).find('td:eq(1)').text(score);
-		resetTurn();
-	});	
-	$('#yahtzee').on('click', function() {
-		var score = ScoreChecker.checkYahtzee();
-		$(this).find('td:eq(1)').text(score);
-		resetTurn();
-	});	
-	$('#chance').on('click', function() {
-		var score = ScoreChecker.checkChance();
-		$(this).find('td:eq(1)').text(score);
-		resetTurn();
-	});	
 }
+
+
+function scoreUpdate(id, score) {
+	total += score;
+	$(id).find('td:eq(1)').text(score);
+	$('#total').text(total);
+}
+
 
 function updateRoll() {
 	// Updates the number of rolls
 	$('#totalRollsNumber').text(totalRolls);
 }
 
+
 function initVariables() {
+	// init Roll object
 	rollDice = new Roll();
-	rollDice.startDicePos();
+	//sets initial values to zero
+	rollDice.showZero();
+
+	// init scorechecker object
+	ScoreChecker = new ScoreChecking();
+
+	$('#console').text('Welcome to David Yahtzee, click Roll to start!');
 }
 
-function game() {
-	initVariables();
+
+function roll() {
 
 	$('#rollButton').on('click', function() {
-
-		if (!gameInPlay) {
-			select();
-			scoreSelect();
+		if (gameOver) {
+			alert('GAME OVER!');
+			return false;
 		}
-
-		gameInPlay = true;
-
 		if(totalRolls < turnsAllowed) {
+			scoreClick = 0;
 			rollDice.roll();
 			totalRolls++;
 			updateRoll();
+			$('#console').text('Rolling roll ' + totalRolls);
 		} else {
 			$('#console').text('You have used up all ' + totalRolls + ' turns, please select where you want this turn scored');
+			return false;
 		}
 	});
+
 }
 
+
+function endGame() {
+	$('#console').text('Game Over!');
+	gameOver = true;
+}
+
+
+function game() {
+	initVariables();
+	select();
+	scoreSelect();
+	roll();
+}
 
 
 $(document).ready(function() {
 	game();
-
 });
